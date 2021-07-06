@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bookMyShowExample.demo.exception.NoDataFoundException;
 import com.bookMyShowExample.demo.model.Screen;
 import com.bookMyShowExample.demo.repositiory.ScreenRepo;
 import com.bookMyShowExample.demo.service.ScreenService;
@@ -28,7 +29,7 @@ public class ScreenController {
 	@Autowired
 	ScreenService screenService;
 
-	@PostMapping("admin/AddScreen")
+	@PostMapping("admin/add-screen")
 	public ResponseEntity<Screen> createScreen(@RequestBody Screen screen) {
 		try {
 			Screen screenEntryData = screenrepo
@@ -39,35 +40,36 @@ public class ScreenController {
 		}
 	}
 
-	@GetMapping("user/Screen/{id}")
-	public ResponseEntity<Screen> getScreenById(@PathVariable("id") int id) {
+	@GetMapping("user/screen/{id}")
+	public ResponseEntity<Screen> getScreenById(@PathVariable("id") int id) throws NoDataFoundException {
 		Optional<Screen> screenData = screenrepo.findById(id);
 
 		if (screenData.isPresent()) {
 			return new ResponseEntity<>(screenData.get(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new NoDataFoundException("Screen id " + id + " is not present in database.");
 		}
 	}
 
-	@GetMapping("user/Screens")
+	@GetMapping("user/screens")
 	public ResponseEntity<List<Screen>> getAllScreen() {
 		List<Screen> screenData = screenService.getAllScreen();
 
 		if (!screenData.isEmpty()) {
 			return new ResponseEntity<>(screenData, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new NoDataFoundException("Screen data is not present in database.");
 		}
 	}
 
-	@GetMapping("user/Screens/scrrenListByTheatreId")
-	public ResponseEntity<List<Screen>> getAllScreenByTheaterId(@RequestParam("id") int id) {
+	@GetMapping("user/screens-by-theatreId")
+	public ResponseEntity<List<Screen>> getAllScreenByTheaterId(@RequestParam("id") int id)
+			throws NoDataFoundException {
 		List<Screen> screenData = screenService.getListofScreenByTheatreId(id);
 		if (!screenData.isEmpty()) {
 			return new ResponseEntity<>(screenData, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new NoDataFoundException("Theatre id " + id + " is not present in screen table.");
 		}
 	}
 
