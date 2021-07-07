@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bookMyShowExample.demo.exception.BadRequestException;
 import com.bookMyShowExample.demo.exception.NoDataFoundException;
 import com.bookMyShowExample.demo.model.Theatre;
+import com.bookMyShowExample.demo.model.pojo.TheatreRequest;
 import com.bookMyShowExample.demo.repositiory.TheatreRepo;
 import com.bookMyShowExample.demo.service.TheatreService;
 
@@ -33,18 +35,18 @@ public class TheatreController {
 	TheatreService theatreservice;
 
 	@PostMapping("admin/add-theatre")
-	public ResponseEntity<Theatre> createTheatre(@RequestBody Theatre theatre) {
+	public ResponseEntity<Theatre> createTheatre(@RequestBody TheatreRequest theatreReq) {
 		try {
 			Theatre theatreEntryData = theatrerepo
-					.save(new Theatre(theatre.getTheatreId(), theatre.getCityName(), theatre.getTheatreName()));
+					.save(new Theatre(theatreReq.getTheatreId(), theatreReq.getCityName(), theatreReq.getTheatreName()));
 			return new ResponseEntity<>(theatreEntryData, HttpStatus.CREATED);
 		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new BadRequestException("Please check request data");
 		}
 	}
 
 	@GetMapping("user/theatre/{id}")
-	public ResponseEntity<Theatre> getTheatreById(@PathVariable("id") int id) throws Exception {
+	public ResponseEntity<Theatre> getTheatreById(@PathVariable("id") int id) throws NoDataFoundException {
 		Theatre theatreData = theatreservice.findOneTheatre(id);
 
 		if (theatreData != null) {

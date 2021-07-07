@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bookMyShowExample.demo.exception.BadRequestException;
 import com.bookMyShowExample.demo.exception.NoDataFoundException;
 import com.bookMyShowExample.demo.model.Screen;
+import com.bookMyShowExample.demo.model.pojo.ScreenRequest;
 import com.bookMyShowExample.demo.repositiory.ScreenRepo;
 import com.bookMyShowExample.demo.service.ScreenService;
 
@@ -30,13 +32,13 @@ public class ScreenController {
 	ScreenService screenService;
 
 	@PostMapping("admin/add-screen")
-	public ResponseEntity<Screen> createScreen(@RequestBody Screen screen) {
+	public ResponseEntity<Screen> createScreen(@RequestBody ScreenRequest screenReq) {
 		try {
 			Screen screenEntryData = screenrepo
-					.save(new Screen(screen.getScreenId(), screen.getScreenName(), screen.getTheatre()));
+					.save(new Screen(screenReq.getScreenId(), screenReq.getScreenName(), screenReq.getTheatre()));
 			return new ResponseEntity<>(screenEntryData, HttpStatus.CREATED);
 		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new BadRequestException("Please check request data");
 		}
 	}
 

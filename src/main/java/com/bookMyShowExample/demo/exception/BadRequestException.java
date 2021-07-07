@@ -1,9 +1,8 @@
 package com.bookMyShowExample.demo.exception;
 
-public class NoDataFoundException extends RuntimeException {
+public class BadRequestException extends RuntimeException {
 
-	private static final long serialVersionUID = 1187989447964869978L;
-
+	private static final long serialVersionUID = 1770352510806321968L;
 	int errorCode;
 	String errormessage;
 
@@ -23,7 +22,7 @@ public class NoDataFoundException extends RuntimeException {
 		this.errormessage = errormessage;
 	}
 
-	public NoDataFoundException(String errormessage) {
+	public BadRequestException(String errormessage) {
 		this.errormessage = errormessage;
 	}
 }
